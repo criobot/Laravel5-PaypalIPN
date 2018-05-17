@@ -73,7 +73,7 @@ class PaypalIPNListener
     private $post_uri = '';
     private $response_status = '';
     private $response = '';
-
+	private $userAgent = 'Laravel5-PaypalIPN/1.0';
     const PAYPAL_HOST = 'www.paypal.com';
     const SANDBOX_HOST = 'www.sandbox.paypal.com';
 
@@ -99,7 +99,6 @@ class PaypalIPNListener
         $this->post_uri = $uri;
 
         $ch = curl_init();
-
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_CAINFO,
@@ -109,6 +108,7 @@ class PaypalIPNListener
         curl_setopt($ch, CURLOPT_POSTFIELDS, $encoded_data);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, $this->follow_location);
         curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
+		curl_setopt($ch,CURLOPT_USERAGENT,$this->userAgent );
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_SSLVERSION, 6);
@@ -156,6 +156,7 @@ class PaypalIPNListener
 
         $header = "POST /cgi-bin/webscr HTTP/1.1\r\n";
         $header .= "Host: " . $this->getPaypalHost() . "\r\n";
+        $header .= "User-Agent: " . $this->userAgent . "\r\n";
         $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
         $header .= "Content-Length: " . strlen($encoded_data) . "\r\n";
         $header .= "Connection: Close\r\n\r\n";
